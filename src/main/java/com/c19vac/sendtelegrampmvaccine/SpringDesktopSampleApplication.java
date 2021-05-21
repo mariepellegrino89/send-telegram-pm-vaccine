@@ -7,16 +7,22 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
+@PropertySource("classpath:application.properties")
 public class SpringDesktopSampleApplication implements CommandLineRunner {
     private static final Logger logger = LogManager.getLogger(SpringDesktopSampleApplication.class);
     public static void main(String[] args) {
         new SpringApplicationBuilder(SpringDesktopSampleApplication.class).headless(false).run(args);
     }
+
+    @Autowired
+    HttpTelegramClient httpTelegramClient;
 
     @Override
     public void run(String... args) throws InterruptedException {
@@ -24,7 +30,7 @@ public class SpringDesktopSampleApplication implements CommandLineRunner {
         //TODO SHITTY CODE, NEED TO FIX
         //works only on chrome and need to place the chromedriver.exe in the right path
         boolean canIScheduleMyVaccine = false;
-        System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
         WebDriver webDriver = new ChromeDriver();
         String baseUrl = "https://prenotazionevaccinicovid.regione.lombardia.it/";
         webDriver.get(baseUrl);
@@ -37,7 +43,6 @@ public class SpringDesktopSampleApplication implements CommandLineRunner {
             canIScheduleMyVaccine = text.contains("40");
             if(canIScheduleMyVaccine){
                 logger.info("WE WE UAGLIO PUOI PRENOTARE E MO T'ARRIVA NU BELL MESSAGGIO");
-                HttpTelegramClient httpTelegramClient = new HttpTelegramClient();
                 httpTelegramClient.sendMessageToGroupChat();
             }
             webDriver.navigate().refresh();

@@ -1,6 +1,5 @@
 package com.c19vac.sendtelegrampmvaccine;
 
-import lombok.extern.java.Log;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
