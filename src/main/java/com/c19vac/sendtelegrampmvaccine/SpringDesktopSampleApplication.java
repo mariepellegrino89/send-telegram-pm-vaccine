@@ -15,6 +15,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,12 +36,14 @@ public class SpringDesktopSampleApplication implements CommandLineRunner {
     public void run(String... args) throws InterruptedException {
 
         while(!noticeCreators.isEmpty()){
+            List<NoticeCreator> notifiedRegions = new ArrayList<>();
             for (NoticeCreator noticeCreator : noticeCreators){
                 boolean notificationResult = noticeCreator.checkStatusAndSendNotification();
                 if(notificationResult){
-                    noticeCreators.remove(noticeCreator);
+                    notifiedRegions.add(noticeCreator);
                 }
             }
+            notifiedRegions.forEach(n -> noticeCreators.remove(n));
         }
 
     }

@@ -12,21 +12,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-@Service
-@Scope(scopeName = "singleton")
 public class NoticeCreatorLombardia implements NoticeCreator {
 
-    @Autowired
-    private ChromeDriver chromeDriver;
 
-    @Value("${group.chat.id}")
-    private String groupChatId;
+    private final ChromeDriver chromeDriver;
 
-    @Value("${message.text.lombardia}")
-    private String messageText;
+    private final String groupChatId;
 
-    @Autowired
-    private HttpTelegramClient httpTelegramClient;
+    private final String messageText;
+
+    private final HttpTelegramClient httpTelegramClient;
+
+    public NoticeCreatorLombardia(ChromeDriver chromeDriver, String groupChatId, String messageText, HttpTelegramClient httpTelegramClient) {
+        this.chromeDriver = chromeDriver;
+        this.groupChatId = groupChatId;
+        this.messageText = messageText;
+        this.httpTelegramClient = httpTelegramClient;
+    }
 
     private boolean firstTime = true;
 
