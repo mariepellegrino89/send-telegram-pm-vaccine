@@ -18,7 +18,7 @@ public class HttpTelegramClient {
     @Value("${group.chat.id}")
     private String groupChatId;
 
-    @Value("${message.text}")
+    @Value("${message.text.lombardia}")
     private String messageText;
 
     @Value("${api.base.url}")
@@ -27,7 +27,7 @@ public class HttpTelegramClient {
     @Value("${api.action}")
     private String apiAction;
 
-    public void sendMessageToGroupChat(){
+    public void sendMessageToGroupChat(String groupChatId, String messageText){
         RestTemplate restTemplate = new RestTemplate();
         String resourceUrl
                 = apiBaseUrl+botToken+apiAction+"?chat_id="+groupChatId+"&text="+messageText;
