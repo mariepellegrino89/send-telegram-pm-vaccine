@@ -22,8 +22,8 @@ import java.util.List;
 @org.springframework.context.annotation.Configuration
 public class ContextConfiguration {
 
-    @Value("${group.chat.id}")
-    private String groupChatId;
+    @Value("#{'${group.chat.id}'.split(',')}")
+    private List<String> groupChatId;
 
     @Value("${message.text.lombardia}")
     private String messageTextLombardia;
@@ -68,7 +68,7 @@ public class ContextConfiguration {
     public List<NoticeCreator> getNoticeCreators(ChromeDriver chromeDriver, HttpTelegramClient httpTelegramClient){
         List<NoticeCreator> noticeCreators = new ArrayList<>();
         noticeCreators.add(new NoticeCreatorLombardia(chromeDriver, groupChatId, messageTextLombardia, httpTelegramClient));
-        noticeCreators.add(new NoticeCreatorPiemonte(chromeDriver, groupChatId, messageTextPiemonte, httpTelegramClient));
+        //noticeCreators.add(new NoticeCreatorPiemonte(chromeDriver, groupChatId, messageTextPiemonte, httpTelegramClient));
         return noticeCreators;
     }
 }

@@ -12,18 +12,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 public class NoticeCreatorLombardia implements NoticeCreator {
 
 
     private final ChromeDriver chromeDriver;
 
-    private final String groupChatId;
+    private final List<String> groupChatId;
 
     private final String messageText;
 
     private final HttpTelegramClient httpTelegramClient;
 
-    public NoticeCreatorLombardia(ChromeDriver chromeDriver, String groupChatId, String messageText, HttpTelegramClient httpTelegramClient) {
+    public NoticeCreatorLombardia(ChromeDriver chromeDriver, List<String> groupChatId, String messageText, HttpTelegramClient httpTelegramClient) {
         this.chromeDriver = chromeDriver;
         this.groupChatId = groupChatId;
         this.messageText = messageText;
@@ -36,26 +38,33 @@ public class NoticeCreatorLombardia implements NoticeCreator {
 
     @Override
     public boolean checkStatusAndSendNotification() throws InterruptedException {
-        boolean canIScheduleMyVaccine;
-        System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
-        boolean notified = false;
-        String baseUrl = "https://prenotazionevaccinicovid.regione.lombardia.it/";
-        if(firstTime) {
-            chromeDriver.get(baseUrl);
+        try {
+            boolean canIScheduleMyVaccine;
+            System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
+            boolean notified = false;
+            String baseUrl = "https://prenotazionevaccinicovid.regione.lombardia.it/";
+            if (firstTime) {
+                chromeDriver.get(baseUrl);
+            }
+            //name of the tag on the lombardia vaccine reservation page
+            WebElement openModalOne = chromeDriver.findElement(By.id("openModalOne"));
+            String text = openModalOne.getText();
+            //age of the people that want to vaccinate
+            canIScheduleMyVaccine = text.contains("40");
+            if (canIScheduleMyVaccine) {
+                logger.info("WE WE UAGLIO PUOI PRENOTARE E MO T'ARRIVA NU BELL MESSAGGIO");
+                groupChatId.forEach(g -> {
+                    httpTelegramClient.sendMessageToGroupChat(g, messageText);
+                });
+                notified = true;
+            }
+            chromeDriver.navigate().refresh();
+            firstTime = false;
+            return notified;
+        } catch (Exception e){
+            logger.error("Exception occured: ", e);
+            return false;
         }
-        //name of the tag on the lombardia vaccine reservation page
-        WebElement openModalOne = chromeDriver.findElement(By.id("openModalOne"));
-        String text = openModalOne.getText();
-        //age of the people that want to vaccinate
-        canIScheduleMyVaccine = text.contains("40");
-        if (canIScheduleMyVaccine) {
-            logger.info("WE WE UAGLIO PUOI PRENOTARE E MO T'ARRIVA NU BELL MESSAGGIO");
-            httpTelegramClient.sendMessageToGroupChat(groupChatId, messageText);
-            notified = true;
-        }
-        chromeDriver.navigate().refresh();
-        firstTime = false;
-        return notified;
     }
 
 }
