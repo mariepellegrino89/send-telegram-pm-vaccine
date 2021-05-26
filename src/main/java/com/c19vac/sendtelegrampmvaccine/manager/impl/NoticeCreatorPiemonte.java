@@ -45,7 +45,11 @@ public class NoticeCreatorPiemonte implements NoticeCreator {
         List<WebElement> classNames = chromeDriver.findElements(By.className("q-item__label"));
 
         canIScheduleMyVaccine.set(false);
-        classNames.forEach(w -> canIScheduleMyVaccine.set(w.getText().contains("Persone in età compresa tra i 30 ed i 39 anni")));
+        classNames.forEach(w -> {
+            if(!canIScheduleMyVaccine.get()) {
+                canIScheduleMyVaccine.set(w.getText().contains("Persone in età compresa tra i 30 ed i 39 anni"));
+            }
+        });
         //age of the people that want to vaccinate
         if (canIScheduleMyVaccine.get()) {
             logger.info("WE WE UAGLIO PUOI PRENOTARE E MO T'ARRIVA NU BELL MESSAGGIO");
